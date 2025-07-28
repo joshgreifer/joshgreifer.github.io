@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, viewport-fit=cover">
-    <title>Matchem</title>
+    <title>Lexen</title>
     <style id="main-style">
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');         /* As close as possible to News Gothic */
+
         :root {
             /*  Globally used vars */
             --backgound-edge-color: #616161;
             --background-middle-color: #ffffff;
-            --game-background-color: #000000;
+            --game-background-color: #303030;
             --tile-background-color: #ffffff;
             --text-color: #ffffff;
             --dialog-background-color: #025771;
             --TRANSITION_TIME: 86400s;
-
-        }
-        div {
-            /*border: 1px solid var(--backgound-edge-color);*/
+            --TILE_SIZE: 44px;
         }
         html, body {
             font-family: moody-adolescent-regular,sans-serif;
@@ -32,7 +31,7 @@
             color: var(--text-color);
             background-color: var(--game-background-color);
         }
-/* Button styles */
+        /* Button styles */
         button {
             background-color: #007bff;      /* your brand color */
             color: white;                   /* text color */
@@ -65,13 +64,13 @@
             background: rgba(0, 0, 0, 0.5); /* 50% black */
         }
 
-        /* 2) When active, switch to grid to center dialog */
+
         .modal.active {
+            /* center the items horizontally, but not vertically */
+            display: flex;               /* use flexbox for centering */
+            justify-content: center;     /* center children horizontally */
 
-            display: grid;                /* establish grid for centering */
-            place-items: center;          /* center children both axes */
         }
-
 
         .modal__content {
             border-radius: 15px;
@@ -79,12 +78,20 @@
 
             display: grid;                /* establish grid for centering */
             place-items: center;          /* center children both axes */
-            width: 70vw;
-            height: 42vw;
+            width: 90vw;
+            height: 90vh;
             background: linear-gradient(rgba(2, 87, 113, 0.60), rgba(0, 34, 48, 0.60));
 
             color: var(--text-color);
-            font-size: 18px;
+            font-size: 14px;
+        }
+
+        .modal_message {
+            margin: 0;
+            padding: 1em;
+            text-align: center;
+            font-size: 1.2em;
+            color: var(--text-color);
         }
         /*
         !!IMPORTANT!!
@@ -104,13 +111,7 @@
                 }
 
          */
-        @keyframes fade-in {
-            from { opacity: 0.2; }
-            to { opacity: 1; }
-        }
-        @keyframes grow {
-            from { scale: .2; }
-        }
+
         div {
             -moz-user-select: none;
             -html-user-select: none;
@@ -124,59 +125,71 @@
             user-select: none;
         }
 
-        div#outer {
+        div#layout {
+            /*overflow: hidden;*/
+            min-height: 90vh;
+            height: 90vh;
+            width: 90vw;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-rows: repeat(3, 1fr);
 
+            grid-template-areas:
+                "deck "
+                "word"
+                "status";
+            /*align-items: center;*/
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+
+        .stock {
+            position: relative;
+            top: 0;
+            left: 0;
+            width: calc(2 * var(--TILE_SIZE));
+            height: calc(2 * var(--TILE_SIZE));
+            /*visibility: hidden;*/
+        }
+
+        .deck {
+            grid-area: deck;
+            display: flex;
+            background-color: var(--game-background-color);
+        }
+        .column {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            text-align: center;
-            height: calc(95vh);
-            width: 95vw;
-
-        }
-        .deck {
-            /*border: 1px solid red;*/
-
-            /*top: 0;*/
-            /*max-width: 95vw;                            !* clear any previous max-width *!*/
-            /*max-height: calc(90vh - 100px);                           !* clear any previous max-height *!*/
-            /*min-height: calc(90vh - 100px);*/
-            height: 80vh;
-            display: grid;
-            position: relative;
-            background-color: var(--game-background-color);
-            /* keep container-type if you rely on container queries elsewhere */
-            container-type: inline-size;
-            place-items: stretch;
-        }
-        div#controls {
-            justify-content: normal;
-            display: grid;
-            grid-template-rows: 10px 1fr 1fr;
-
-            bottom: 0;
-            /*padding-top: 10px;*/
-            width: 100%;
-
-            /*height: 100px;*/
-            grid-template-areas:
-                "timer-bar"
-                "score"
-                "instructions";
-
-            font-size: 18px;
+            justify-content: flex-end; /* bottom-align the tiles */
         }
 
+        .column > :not(:last-child) {
+
+            opacity: .7;
+
+        }
+
+        .stock .scrabble-tile {
+            position: absolute;
+        }
+        #word > :not(:last-child) {
+
+            opacity: .9;
+
+        }
         @font-face {
-            font-family: "moody-adolescent-regular";
-            src: url("fonts/MoodyadolescentRegular-jE00v.otf") format("opentype");
+            font-family: 'Roboto', Arial, Verdana, sans-serif;
         }
 
 
         div#timer-bar {
-            grid-area: timer-bar;
-            background: linear-gradient(135deg, #ff0000 0%, #ff0000 10%, #0091c3 30%, #0091c3 90%, #00ff00 95%, #00ff00 100%);
+            justify-self: end;
+            height: 100%;
+            width: 5px;
+            grid-area: deck;
+            /*background: linear-gradient(to top, #ff0000 0%, #ff0000 10%, #0091c3 30%, #0091c3 90%, #00ff00 95%, #00ff00 100%);*/
 
         }
         .timer-fill {
@@ -185,102 +198,285 @@
             background-color: var(--game-background-color);
 
         }
-        .timer-fill.animate {
-            animation: drain var(--TRANSITION_TIME) linear forwards;
+        @keyframes barColorChange {
+            100% { background-color: #ff0000; }   /* Start, fill fully covers bar: top is red */
+            90% { background-color: #ff0000; }
+            70% { background-color: #0091c3; }
+            10% { background-color: #0091c3; }
+            5% { background-color: #00ff00; }
+            0% { background-color: #00ff00; }   /* End, fill gone: bottom is green */
         }
+
+
+        .timer-fill.animate {
+            animation:
+                    drain var(--TRANSITION_TIME) linear forwards,
+                    barColorChange var(--TRANSITION_TIME) linear forwards;
+        }
+
         @keyframes drain {
             from {
-                width: 100%;
+                height: 0;
             }
             to {
-                width: 0;
+                height: 100%;
             }
         }
 
-        div#score {
-            grid-area: score;
+        div#game-status {
+            grid-area: status;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 1em; /* Space between score, word, and submit-button */
         }
 
-        div#instructions {
-            grid-area: instructions;
+
+        .build-word-container {
+            box-sizing: border-box;
+            grid-area: word;
+            display: flex;
+
+            /*justify-content: center;*/
+            flex-direction:  row;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 0px;
+
         }
 
-        div.tile {
-            /*aspect-ratio: 1 / 1;*/
-            text-align: center;
-            /*text-shadow: 2px 2px 4px #424242;*/
-            background: linear-gradient(135deg, #fffff0 0%, #f4f1d3 100%);
-            /*background-color: #f4f1d3;*/
-            min-width:   0;
-            min-height:  0;
-            /*Border: 1px solid var(--backgound-edge-color);*/
-            border-radius: 5px;
+        .word-score-container {
+            display: flex;
+            align-items: center;
+            gap: 1em; /* Space between score and submit-button */
+        }
+
+        #word {
+            /*width: calc(11 * var(--TILE_SIZE)); !* 10 tiles + 1px border *!*/
+            height: var(--TILE_SIZE);
+            max-width: calc(5 * var(--TILE_SIZE));
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            align-items: center;   /* Optional: vertically center the tiles */
+            justify-content: flex-start; /* Optional: align left */
+            /*gap: 0.5em; !* Optional: add space between tiles *!*/
+            min-height: 1em; /* Prevent collapse when empty */
+        }
+        #word > :nth-child(7).background {
+            /* Your styles for the 7th child, e.g.: */
+            background: gold;
+            /* or add the "double-word-bonus" class via JS: */
+        }
+        .background {
+            width: var(--TILE_SIZE);
+            height: var(--TILE_SIZE);
             margin: 2px;
-            box-sizing:  border-box;
-            /*filter: drop-shadow(2px 2px 6px #c1b585);*/
-
+            background: linear-gradient(145deg, #000000 60%, #d9c08b 100%);
+        }
+        .scrabble-tile {
+            display: inline-block;
+            position: relative;
+            margin: 2px;
+            width: var(--TILE_SIZE);
+            height: var(--TILE_SIZE);
+            background: linear-gradient(145deg, #f5e8cb 60%, #d9c08b 100%);
+            border-radius: 3px;
+            box-shadow:
+                    0 1px 2px 0 #bfa97c,       /* outer shadow */
+                    inset 1px 1px 2px #fff8e1, /* highlight */
+                    inset -1px -1px 2px #bda875; /* bevel/dark */
+            border: 1px solid #b29e6b;
+            font-family: 'Roboto', Arial, Verdana, sans-serif;
+            font-weight: bold;
+            color: #42361e;
+            text-align: center;
+            line-height: var(--TILE_SIZE);
+            font-size: calc( var(--TILE_SIZE) * .5 ); /* Adjust font size based on tile size */
+            user-select: none;
+        }
+        .scrabble-tile:not([data-value="0"])::after {
+            content: attr(data-value);
+            position: absolute;
+            bottom: calc( var(--TILE_SIZE) / 6);
+            right: calc( var(--TILE_SIZE) / 6);
+            font-size: calc( var(--TILE_SIZE) * .2 );
+            font-family: 'Roboto', Arial, Verdana, sans-serif;
+            color: #392c17;
+            font-weight: bold;
+            /*opacity: 0.82;*/
+            line-height: 1;
+        }
+        .scrabble-tile.substituted {
+            color: #b1b1b1;
+        }
+        div.selected {
+            background: linear-gradient(135deg, #ff8585 0%, #ff0000 100%);
         }
         /* Force every tile to be a square */
 
-        div.tile:hover {
-            /*background-color: #ecdc74;*/
-            cursor: grabbing;
-        }
 
-        div.tile img  {
-            filter: drop-shadow(2px 2px 4px #c1b585);
-            width: 94%;
-            object-fit: contain;
-
-        }
 
         div.rotateOut {
             transform: rotateY(90deg);
-            transition-duration: 0.5s;
+            transition: transform 0.5s;
         }
-        div.selected {
-            background: linear-gradient(135deg, #ff0000 0%, #710202 100%);
-        }
+
         div.rotateBack {
             transform: rotateY(-360deg);
-            transition-duration: 0.6s;
+            transition: transform 0.6s;
         }
 
+        .submit-button {
+            vertical-align: middle;
+            text-align: center;
+            width: var(--TILE_SIZE);
+            height: var(--TILE_SIZE);
+            line-height:var(--TILE_SIZE);
+            border-radius: 25%;
+            background: linear-gradient(135deg, #afafaf 0%, #3a3a3a 100%);
+            color: var(--text-color);
+            display: inline-block;
+            cursor: pointer;
+            font-size: 1em;
+            user-select: none;
+        }
+        .hint-button {
 
+            border-radius: 25%;
+            width: calc( var(--TILE_SIZE) * 1.5 );
+            height: var(--TILE_SIZE);
+            display: flex;
+            justify-content: flex-end; /* aligns horizontally to the right */
+            align-items: flex-end;     /* aligns vertically to the bottom */
+            /*line-height: var(--TILE_SIZE);*/
+            background-image: url('assets/img/dr-johnson-01.png');
+            color: var(--text-color);
+            text-shadow: 0 0 4px red, 0 1px 8px red;
+            cursor: pointer;
+            font-size: .75em;
+
+        }
+        .hint-button::after {
+            content: attr(data-hints-left); /* Use a data-hint attribute for the value */
+
+        }
+        .hidden {
+            display: none;
+        }
         @keyframes hintCycle {
 
-            0%   { transform: rotateY(0deg); }
-            12% { transform: rotateY(-360deg); }
-            100% { transform: rotateY(-360deg); }
+            0%   { transform: scale(100%); }
+            50% { transform: scale(110%); }
+            100% { transform: scale(100%); }
         }
 
-        div.hint {
-            animation: hintCycle 5s linear infinite !important;
+        .submit-button.is-word {
+            background: linear-gradient(135deg, #f63737 0%, #550000 100%);
+            animation: hintCycle 1s ease-in-out infinite;
+        }
+        .hint-button.pulse {
+            animation: hintCycle .3s ease-in-out;
+            animation-iteration-count: 4;
+        }
+        .starburst {
+            width: 64px;
+            height: 64px;
+            background: radial-gradient(#ffffff 0%, #003aff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /*font-weight: bold;*/
+            font-size: .75em;
+            color: red;
+            /* Jagged star shape using clip-path */
+            clip-path: polygon(
+                    50.0% 0.0%, 55.48% 15.43%, 65.45% 2.45%, 65.89% 18.81%, 79.39% 9.55%, 74.75% 25.25%, 90.45% 20.61%, 81.19% 34.11%, 97.55% 34.55%, 84.57% 44.52%, 100.0% 50.0%, 84.57% 55.48%, 97.55% 65.45%, 81.19% 65.89%, 90.45% 79.39%, 74.75% 74.75%, 79.39% 90.45%, 65.89% 81.19%, 65.45% 97.55%, 55.48% 84.57%, 50.0% 100.0%, 44.52% 84.57%, 34.55% 97.55%, 34.11% 81.19%, 20.61% 90.45%, 25.25% 74.75%, 9.55% 79.39%, 18.81% 65.89%, 2.45% 65.45%, 15.43% 55.48%, 0.0% 50.0%, 15.43% 44.52%, 2.45% 34.55%, 18.81% 34.11%, 9.55% 20.61%, 25.25% 25.25%, 20.61% 9.55%, 34.11% 18.81%, 34.55% 2.45%, 44.52% 15.43%
+            );
+
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .starburst.x3 {
+            background: radial-gradient(#ffffff 0%, #ff8500 100%);
+        }
+        .starburst.x5 {
+            background: radial-gradient(#ffffff 0%, #ffe800 100%);
         }
 
-        div.fadeIn {
-            animation: fade-in 0.2s ease forwards;
+        .submit-button.cant-make-a-word {
+            background: linear-gradient(135deg, #afafaf 0%, #bcb9b9 100%);
+            color: var(--text-color);
+        }
+    </style>
+    <style id="options-panel-style">
+        .options-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fafaff;
+            color: #222; /* dark text */
+            border: 2px solid #bbb;
+            border-radius: 8px;
+            box-shadow: 0 8px 40px #0003;
+            padding: 2em 2.5em;
+            z-index: 1000;
+            min-width: 340px;
         }
 
-        div.grow {
-            animation: grow 0.5s ease forwards;
+        .options-panel h2 {
+            margin-top: 0;
+            margin-bottom: 1em;
+            font-size: 1.3em;
+            font-weight: bold;
         }
+
+        .options-panel form {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8em;
+        }
+
+        .options-panel label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1em;
+            margin-bottom: 0; /* override any margin from before */
+        }
+
+        .options-panel input {
+            margin-left: 1em;
+            text-align: right;
+            width: 5em;
+            padding: 0.2em 0.5em;
+            border: 1px solid #bbb;
+            border-radius: 4px;
+            background: #fff;
+            color: #222;
+            font-size: 1em;
+        }
+
+        .options-panel button {
+            margin-top: 1.5em;
+            font-size: 1em;
+            padding: 0.5em 1.5em;
+            border: none;
+            background: #4074e0;
+            color: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .options-panel button:hover {
+            background: #2b4f91;
+        }
+
     </style>
 </head>
 <body>
-
-<div id="outer">
-    <div class="deck"></div>
-    <div id="controls">
-        <div id="timer-bar">
-            <div class="timer-fill"></div>
-        </div>
-        <div id="score"></div>
-        <div id="instructions"></div>
-
-    </div>
-</div>
-
+<div class="app"></div>
 <div id="modal" class="modal">
     <div class="modal__content">
         <p class="modal_message">(Modal Dialog message)</p>
@@ -288,9 +484,31 @@
     </div>
 </div>
 
+<div id="game-options-panel" class="options-panel">
+    <h2>Game Options</h2>
+    <form id="game-options-form">
+        <label>Use Giant Dictionary: <input type="checkbox" name="BIG_DIC"></label>
+<!--        <label>Allow Proper Nouns: <input type="checkbox" name="ALLOW_PROPER_NOUNS"></label>-->
+        <label>Columns: <input name="COLS" type="number" min="2" max="20" value="7"></label>
+        <label>Initial Tiles: <input name="INITIAL_DEAL_TILES" type="number" min="1" max="200" value="49"></label>
+        <label>Min Word Length: <input name="MIN_WORD_LENGTH" type="number" min="2" max="10" value="2"></label>
+        <label>Max Word Length For Search: <input name="MAX_WORD_LENGTH_FOR_SEARCH" type="number" min="3" max="20" value="10"></label>
+<!--        <label>Min Scoring Word Length: <input name="MIN_SCORING_WORD_LENGTH" type="number" min="2" max="10" value="3"></label>-->
+<!--        <label>Min Scoring Score: <input name="MIN_SCORING_SCORE" type="number" min="1" max="100" value="10"></label>-->
+<!--        <label>Max Hints: <input name="INITIAL_HINTS" type="number" min="1" max="1000" value="1"></label>-->
+<!--        <label>Bonus (7+ letters): <input name="LENGTH_FIFTY_BONUS" type="number" min="1" max="20" value="7"></label>-->
+<!--        <label>Triple Word (9+): <input name="LENGTH_TRIPLE_WORD_SCORE" type="number" min="1" max="20" value="9"></label>-->
+<!--        <label>5x Word (10+): <input name="LENGTH_5X_WORD_SCORE" type="number" min="1" max="20" value="10"></label>-->
+<!--        <label>Timer Duration (s): <input name="TIMER_BAR_DURATION" type="number" min="5" max="3600" value="600"></label>-->
+        <button type="submit">Start Game</button>
+    </form>
+</div>
+
 
 </body>
-<script src="emojis.js"></script>
-<script src="emoji-imgs.js"></script>
-<script src="index.js"></script>
+<script src=bundle.js></script>
+<!--<script src="assets/wordlist/LEXICON40.js"></script>-->
+<!--<script src="assets/wordlist/LEXICON95.js"></script>-->
+<!--<script src="assets/wordlist/wl95.js"></script>-->
+<!--<script src="index.js"></script>-->
 </html>
